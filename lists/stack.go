@@ -69,6 +69,7 @@ func (r *Stack[T]) Peek() (T, error) {
 	return r.head.data, nil
 }
 
+// Return a slice representation of the current state of the stack
 func (r *Stack[T]) ToSlice() []T {
 	if r.curBuffSize == 0 {
 		return make([]T, 0)
