@@ -8,7 +8,7 @@ import "errors"
 // Pop, which removes the most recently added element.
 // Additionally, a peek operation can, without modifying the stack, return the value of the last element added.
 type Stack[T any] struct {
-	curBuffSize int
+	curBuffSize uint
 	head        *snode[T]
 	tail        *snode[T]
 }
@@ -83,4 +83,9 @@ func (r *Stack[T]) ToSlice() []T {
 		tmp = tmp.next
 	}
 	return s
+}
+
+// Return the number of elements in the Stack
+func (r *Stack[T]) Count() uint {
+	return r.curBuffSize
 }

@@ -35,7 +35,7 @@ func (r *Queue[T]) Enqueue(element T) {
 		r.tail = r.head
 		r.curBuffSize++
 	} else {
-		if r.curBuffSize == r.maxBuffSize {
+		if r.maxBuffSize > 0 && r.curBuffSize == r.maxBuffSize {
 			r.head = r.head.next
 		} else {
 			r.curBuffSize++
@@ -102,4 +102,9 @@ func (r *Queue[T]) ToSlice() []T {
 		tmp = tmp.next
 	}
 	return s
+}
+
+// Return the number of elements in the queue
+func (r *Queue[T]) Count() uint {
+	return r.curBuffSize
 }
