@@ -12,3 +12,16 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Countable interface
 - Implemented Countable interface in Stack and Queue
 - CHANGELOG.md
+
+## [1.1.0] - 2024-05-10
+
+### Added
+
+- Sliceable interface
+- SafeStack and SafeQueue thread safe versions of Stack and Queue respectively
+- Benchmarks that can be run in the `lists` folder by running `go test -bench=.`
+- Added benchmark results, and usage information to README.md
+
+### Updated
+
+- README.md

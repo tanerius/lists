@@ -1,5 +1,17 @@
 package lists
 
+const ListsVersion string = "1.1.0"
+
+// Interface for countable types
+type Countable interface {
+	Count() uint
+}
+
+// Interface for sliceable types
+type Sliceable interface {
+	ToSlice() []any
+}
+
 // Interface for a Fifo list
 type Fifo interface {
 	Enqueue(x any)
