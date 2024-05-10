@@ -1,6 +1,6 @@
 package lists
 
-const ListsVersion string = "1.1.0"
+const ListsVersion string = "1.1.1"
 
 // Interface for countable types
 type Countable interface {
@@ -13,20 +13,20 @@ type Sliceable interface {
 }
 
 // Interface for a Fifo list
-type Fifo interface {
-	Enqueue(x any)
-	Dequeue() (any, error)
+type Fifo[T any] interface {
+	Enqueue(x T)
+	Dequeue() (T, error)
 	IsEmpty() bool
 	Isfull() bool
-	Peek() (any, error)
+	Peek() (T, error)
 }
 
 // Interface for a Lifo list
-type Lifo interface {
-	Push(x any)
-	Pop() (any, error)
+type Lifo[T any] interface {
+	Push(x T)
+	Pop() (T, error)
 	IsEmpty() bool
-	Peek() (any, error)
+	Peek() (T, error)
 }
 
 // Struct for a single link node

@@ -25,3 +25,9 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Updated
 
 - README.md
+
+## [1.1.1] - 2024-05-10
+
+### Updated
+
+- Fifo and Lifo to generic, to actually be compatible with the structs allowing them to implement the interfaces
