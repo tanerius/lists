@@ -11,20 +11,35 @@ import "errors"
 type LSQueue[T any] struct {
 	maxBuffSize uint
 	curBuffSize uint
-	head        *snode[T]
-	tail        *snode[T]
+	lastIndex   int
+	data        []T
 }
 
 // The constructor for a new LSQueue instance with elements of type T.
 //
 // # Returns a pointer to a LSQueue
 func NewLSQueue[T any](size uint) *LSQueue[T] {
+
 	return &LSQueue[T]{
 		maxBuffSize: size,
 		curBuffSize: 0,
-		head:        nil,
-		tail:        nil,
+		lastIndex:   0,
+		data:        make([]T, size, size),
 	}
+}
+
+func (r *LSQueue[T]) getFrontElementIndex() int {
+	if r.curBuffSize == 0 {
+		return 0
+	}
+
+	i := (r.lastIndex + 1) - int(r.curBuffSize)
+
+	if i < 0 {
+		i = int(r.maxBuffSize) + i
+	}
+
+	return i
 }
 
 // Add an element of type T to the end of the queue. Complexity is O(1)
@@ -33,20 +48,12 @@ func (r *LSQueue[T]) Enqueue(element T) {
 		return
 	}
 
-	if r.curBuffSize == 0 {
-		r.head = newSingleNode[T](element, nil)
-		r.tail = r.head
+	if r.curBuffSize+1 < r.maxBuffSize {
 		r.curBuffSize++
-	} else {
-		if r.maxBuffSize > 0 && r.curBuffSize == r.maxBuffSize {
-			r.head = r.head.next
-		} else {
-			r.curBuffSize++
-		}
-		newItem := newSingleNode(element, nil)
-		r.tail.next = newItem
-		r.tail = newItem
 	}
+
+	r.lastIndex = (r.lastIndex + 1) % int(r.maxBuffSize)
+	r.data[r.lastIndex] = element
 }
 
 // Remove and return am element of type T from the beginning of the queue. Complexity is O(1)
@@ -56,14 +63,10 @@ func (r *LSQueue[T]) Dequeue() (T, error) {
 		return result, errors.New("empty list")
 	}
 
-	ret := r.head.data
-	r.head = r.head.next
+	indexOfElementToDequeue := r.getFrontElementIndex()
+
 	r.curBuffSize--
-	if r.curBuffSize == 0 {
-		r.head = nil
-		r.tail = nil
-	}
-	return ret, nil
+	return r.data[indexOfElementToDequeue], nil
 }
 
 // Checks if the queue is empty
@@ -88,7 +91,8 @@ func (r *LSQueue[T]) Peek() (T, error) {
 		return result, errors.New("empty list")
 	}
 
-	return r.tail.data, nil
+	indexOfElementToDequeue := r.getFrontElementIndex()
+	return r.data[indexOfElementToDequeue], nil
 }
 
 // Return a slice representation of the current state of the queue
@@ -98,12 +102,9 @@ func (r *LSQueue[T]) ToSlice() []T {
 	}
 
 	s := make([]T, 0, r.curBuffSize)
-	tmp := r.head
 
-	for tmp != nil {
-		s = append(s, tmp.data)
-		tmp = tmp.next
-	}
+	// TODO: Implement
+
 	return s
 }
 

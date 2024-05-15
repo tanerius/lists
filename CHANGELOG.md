@@ -9,11 +9,13 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Added
 
-- LSQueue struct representing a Limite Size queue. 
+- LSQueue struct representing a Limited Size queue. 
+- Sliceable and Limitable interfaces
 
 ### Updated
 
 - NewQueue function which returns a new Queue pointer doesn't take a parameter anymore. This is a BREAKING CHANGE
+- Drastically improved access time and write time performance on limites size queues (LSQueue) in comparison to previous versions.
 - README.md
 - The ordering of updates in 
 
