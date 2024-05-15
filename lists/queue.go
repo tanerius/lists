@@ -1,6 +1,8 @@
 package lists
 
-import "errors"
+import (
+	"errors"
+)
 
 // The Queue is a collection of entities that are maintained in a sequence and can be modified
 // by the addition of entities at one end of the sequence and the removal of entities from the
@@ -11,8 +13,9 @@ type Queue[T any] struct {
 	curBuffSize      uint
 	lowClusterIndex  uint
 	highClusterIndex uint
-	lastElementIndex uint
-	data             map[uint][1000]T
+	headIndex        uint
+	tailIndex        uint
+	data             map[uint]*[1000]T
 }
 
 // The constructor for a new Queue instance with elements of type T.
@@ -25,31 +28,32 @@ func NewQueue[T any]() *Queue[T] {
 		curBuffSize:      0,
 		lowClusterIndex:  0,
 		highClusterIndex: 0,
-		lastElementIndex: 0,
-		data:             make(map[uint][1000]T),
+		headIndex:        0,
+		tailIndex:        0,
+		data:             make(map[uint]*[1000]T),
 	}
 }
 
 // Add an element of type T to the end of the queue. Complexity is O(1)
 func (r *Queue[T]) Enqueue(element T) {
 	if r.curBuffSize == 0 {
-		r.data[0] = [1000]T{}
+		r.data[0] = &[1000]T{}
+		r.data[0][0] = element
 	} else {
-		r.lastElementIndex++
-		clusterId := r.lastElementIndex / 1000
-		normalizedClusterIndex := r.lastElementIndex % 1000
+		r.tailIndex++
+		clusterId := r.tailIndex / 1000
+		normalizedClusterIndex := r.tailIndex % 1000
 		// check if cluster exists
 		if clusterId > r.highClusterIndex {
 			// we need to create a new cluster here
 			r.highClusterIndex++
-			r.data[r.highClusterIndex] = [1000]T{}
+			r.data[r.highClusterIndex] = &[1000]T{}
 
 			if clusterId != r.highClusterIndex {
 				panic("misaligned cluster cannot continue")
 			}
 		}
-		arr := r.data[clusterId]
-		arr[normalizedClusterIndex] = element
+		r.data[clusterId][normalizedClusterIndex] = element
 	}
 	r.curBuffSize++
 }
@@ -60,14 +64,23 @@ func (r *Queue[T]) Dequeue() (T, error) {
 		var result T
 		return result, errors.New("empty list")
 	}
-
-	ret := r.head.data
-	r.head = r.head.next
-	r.curBuffSize--
-	if r.curBuffSize == 0 {
-		r.head = nil
-		r.tail = nil
+	var ret T
+	clusterId := r.headIndex / 1000
+	normalizedClusterIndex := r.headIndex % 1000
+	if r.curBuffSize == 1 {
+		ret = r.data[clusterId][normalizedClusterIndex]
+		r.curBuffSize = 0
+		r.headIndex = 0
+		r.tailIndex = 0
+		if clusterId > 0 {
+			r.data = make(map[uint]*[1000]T)
+		}
+	} else {
+		ret = r.data[clusterId][normalizedClusterIndex]
+		r.headIndex++
+		r.curBuffSize--
 	}
+
 	return ret, nil
 }
 
@@ -85,23 +98,16 @@ func (r *Queue[T]) Peek() (T, error) {
 		return result, errors.New("empty list")
 	}
 
-	return r.tail.data, nil
+	clusterId := r.headIndex / 1000
+	normalizedClusterIndex := r.headIndex % 1000
+	return r.data[clusterId][normalizedClusterIndex], nil
+
 }
 
 // Return a slice representation of the current state of the queue
 func (r *Queue[T]) ToSlice() []T {
-	if r.curBuffSize == 0 {
-		return make([]T, 0)
-	}
 
-	s := make([]T, 0, r.curBuffSize)
-	tmp := r.head
-
-	for tmp != nil {
-		s = append(s, tmp.data)
-		tmp = tmp.next
-	}
-	return s
+	return make([]T, 0)
 }
 
 // Return the number of elements in the queue
