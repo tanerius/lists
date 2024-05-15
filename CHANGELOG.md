@@ -5,15 +5,25 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
-## [1.0.2] - 2024-05-09
+## [v1.2.0] - 2024-05-15
 
 ### Added
 
-- Countable interface
-- Implemented Countable interface in Stack and Queue
-- CHANGELOG.md
+- LSQueue struct representing a Limite Size queue. 
 
-## [1.1.0] - 2024-05-10
+### Updated
+
+- NewQueue function which returns a new Queue pointer doesn't take a parameter anymore. This is a BREAKING CHANGE
+- README.md
+- The ordering of updates in 
+
+## [v1.1.1] - 2024-05-10
+
+### Updated
+
+- Fifo and Lifo to generic, to actually be compatible with the structs allowing them to implement the interfaces
+
+## [v1.1.0] - 2024-05-10
 
 ### Added
 
@@ -26,8 +36,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 - README.md
 
-## [1.1.1] - 2024-05-10
+## [v1.0.2] - 2024-05-09
 
-### Updated
+### Added
 
-- Fifo and Lifo to generic, to actually be compatible with the structs allowing them to implement the interfaces
+- Countable interface
+- Implemented Countable interface in Stack and Queue
+- CHANGELOG.md

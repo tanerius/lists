@@ -5,7 +5,7 @@ import (
 )
 
 func BenchmarkRegularQueueEnqueue(b *testing.B) {
-	queue := NewQueue[int](0)
+	queue := NewQueue[int]()
 
 	for i := 0; i < b.N; i++ {
 		queue.Enqueue(i)
@@ -13,7 +13,7 @@ func BenchmarkRegularQueueEnqueue(b *testing.B) {
 }
 
 func BenchmarkRegularQueueDequeue(b *testing.B) {
-	queue := NewQueue[int](0)
+	queue := NewQueue[int]()
 	b.StopTimer()
 	for i := 0; i < b.N; i++ {
 		queue.Enqueue(i)
@@ -26,7 +26,7 @@ func BenchmarkRegularQueueDequeue(b *testing.B) {
 }
 
 func BenchmarkLimitedSizeQueueEnqueue(b *testing.B) {
-	queue := NewQueue[int](10)
+	queue := NewLSQueue[int](10)
 
 	for i := 0; i < b.N; i++ {
 		queue.Enqueue(i)
@@ -34,7 +34,7 @@ func BenchmarkLimitedSizeQueueEnqueue(b *testing.B) {
 }
 
 func BenchmarkLimitedSizeQueueDequeue(b *testing.B) {
-	queue := NewQueue[int](10)
+	queue := NewLSQueue[int](10)
 	b.StopTimer()
 	for i := 0; i < b.N; i++ {
 		queue.Enqueue(i)

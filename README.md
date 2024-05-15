@@ -1,9 +1,9 @@
-# Golang generic list types - Stack and Queue v1.1.1
+# Golang generic list types - Stack and Queue v1.2.0
 
 **Lists** is a simple O(1) implementation of a stack, a queue and a limited size queue in golang. 
 The reson for this is that Golang as of yet does not have a standard implementation of a generic queue and stack.  
   
-**Stack** and **Queue** and NOT thread safe.  
+**Stack**, **Queue** and **LSQueue** and NOT thread safe.  
 Both **Stack** and **Queue** have their thread safe counterparts, **SafeStack** and **SafeQueue** respectively.  
 
 ## Queue and Limited Size Queue
@@ -30,7 +30,7 @@ Below are examples of usage:
   
 ```go
 // Create a regular queue of integers
-queue := NewQueue[int](0)
+queue := NewQueue[int]()
 // enqueue elements
 queue.Enqueue(2)
 queue.Enqueue(3)
@@ -49,7 +49,7 @@ Output:
 */
 
 // Create a fixed size queue of 3 integers
-fixedQueue := NewQueue[int](3)
+fixedQueue := NewLSQueue[int](3)
 // enqueue elements
 fixedQueue.Enqueue(5)
 fixedQueue.Enqueue(6)

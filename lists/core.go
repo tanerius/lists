@@ -1,15 +1,21 @@
 package lists
 
-const ListsVersion string = "1.1.1"
+const ListsVersion string = "1.2.0"
 
 // Interface for countable types
-type Countable interface {
+type Countable[T any] interface {
 	Count() uint
 }
 
 // Interface for sliceable types
-type Sliceable interface {
+type Sliceable[T any] interface {
 	ToSlice() []any
+}
+
+// Interface for limited lists
+type Limitable[T any] interface {
+	Capacity() uint
+	Isfull() bool
 }
 
 // Interface for a Fifo list
@@ -17,7 +23,6 @@ type Fifo[T any] interface {
 	Enqueue(x T)
 	Dequeue() (T, error)
 	IsEmpty() bool
-	Isfull() bool
 	Peek() (T, error)
 }
 
