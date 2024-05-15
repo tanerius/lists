@@ -8,9 +8,11 @@ import "errors"
 //
 // Queue is a list that implements the Fifo interface
 type Queue[T any] struct {
-	curBuffSize uint
-	head        *snode[T]
-	tail        *snode[T]
+	curBuffSize      uint
+	lowClusterIndex  uint
+	highClusterIndex uint
+	lastElementIndex uint
+	data             map[uint][1000]T
 }
 
 // The constructor for a new Queue instance with elements of type T.
@@ -20,24 +22,36 @@ type Queue[T any] struct {
 // Returns a pointer to a queue
 func NewQueue[T any]() *Queue[T] {
 	return &Queue[T]{
-		curBuffSize: 0,
-		head:        nil,
-		tail:        nil,
+		curBuffSize:      0,
+		lowClusterIndex:  0,
+		highClusterIndex: 0,
+		lastElementIndex: 0,
+		data:             make(map[uint][1000]T),
 	}
 }
 
 // Add an element of type T to the end of the queue. Complexity is O(1)
 func (r *Queue[T]) Enqueue(element T) {
 	if r.curBuffSize == 0 {
-		r.head = newSingleNode[T](element, nil)
-		r.tail = r.head
-		r.curBuffSize++
+		r.data[0] = [1000]T{}
 	} else {
-		r.curBuffSize++
-		newItem := newSingleNode(element, nil)
-		r.tail.next = newItem
-		r.tail = newItem
+		r.lastElementIndex++
+		clusterId := r.lastElementIndex / 1000
+		normalizedClusterIndex := r.lastElementIndex % 1000
+		// check if cluster exists
+		if clusterId > r.highClusterIndex {
+			// we need to create a new cluster here
+			r.highClusterIndex++
+			r.data[r.highClusterIndex] = [1000]T{}
+
+			if clusterId != r.highClusterIndex {
+				panic("misaligned cluster cannot continue")
+			}
+		}
+		arr := r.data[clusterId]
+		arr[normalizedClusterIndex] = element
 	}
+	r.curBuffSize++
 }
 
 // Remove and return am element of type T from the beginning of the queue. Complexity is O(1)
