@@ -16,7 +16,6 @@ import (
 // Queue is a list that implements the Fifo interface
 type SafeQueue[T any] struct {
 	mu          sync.RWMutex
-	maxBuffSize uint
 	curBuffSize uint
 	head        *snode[T]
 	tail        *snode[T]
@@ -27,9 +26,8 @@ type SafeQueue[T any] struct {
 // If size = 0 then it is a generic unlimited queue
 //
 // Returns a pointer to a queue
-func NewSafeQueue[T any](size uint) *SafeQueue[T] {
+func NewSafeQueue[T any]() *SafeQueue[T] {
 	return &SafeQueue[T]{
-		maxBuffSize: size,
 		curBuffSize: 0,
 		head:        nil,
 		tail:        nil,
@@ -46,12 +44,8 @@ func (r *SafeQueue[T]) Enqueue(element T) {
 		r.tail = r.head
 		r.curBuffSize++
 	} else {
-		if r.maxBuffSize > 0 && r.curBuffSize == r.maxBuffSize {
-			r.head = r.head.next
-		} else {
-			r.curBuffSize++
-		}
-		newItem := newSingleNode(element, nil)
+		r.curBuffSize++
+		newItem := newSingleNode[T](element, nil)
 		r.tail.next = newItem
 		r.tail = newItem
 	}
@@ -84,16 +78,6 @@ func (r *SafeQueue[T]) IsEmpty() bool {
 	r.mu.RLock()
 	defer r.mu.RUnlock()
 	return r.curBuffSize == 0
-}
-
-// Checks if the limited size queue is full
-//
-// Return true if the limites size queue has reached its given capacity. Otherwise returns false.
-// Also returns false if the queue was created with a size of 0 (generic unlimited queue)
-func (r *SafeQueue[T]) Isfull() bool {
-	r.mu.RLock()
-	defer r.mu.RUnlock()
-	return r.curBuffSize == r.maxBuffSize
 }
 
 // Return am element of type T from the beginning of the queue without Dequeuing it. Complexity is O(1)
