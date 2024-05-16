@@ -15,7 +15,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Updated
 
 - NewQueue function which returns a new Queue pointer doesn't take a parameter anymore. This is a BREAKING CHANGE
-- Drastically improved access time and write time performance on limites size queues (LSQueue) in comparison to previous versions.
+- Drastically improved access time and write time performance on limited size queues (LSQueue) in comparison to previous versions.
+- Drastically improved access time and write time performance on regular queues. Check Readme.MD for comparison.
 - README.md
 - The ordering of updates in 
 

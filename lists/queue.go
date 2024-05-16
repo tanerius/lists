@@ -10,12 +10,11 @@ import (
 //
 // Queue is a list that implements the Fifo interface
 type Queue[T any] struct {
-	curBuffSize      uint
-	lowClusterIndex  uint
-	highClusterIndex uint
-	headIndex        uint
-	tailIndex        uint
-	data             map[uint]*[1000]T
+	curBuffSize uint
+	headIndex   uint
+	tailIndex   uint
+	head        *arrnode[T]
+	tail        *arrnode[T]
 }
 
 // The constructor for a new Queue instance with elements of type T.
@@ -24,85 +23,55 @@ type Queue[T any] struct {
 //
 // Returns a pointer to a queue
 func NewQueue[T any]() *Queue[T] {
+	node := newArrayNode[T](nil)
 	return &Queue[T]{
-		curBuffSize:      0,
-		lowClusterIndex:  0,
-		highClusterIndex: 0,
-		headIndex:        0,
-		tailIndex:        0,
-		data:             make(map[uint]*[1000]T),
+		curBuffSize: 0,
+		headIndex:   0,
+		tailIndex:   0,
+		head:        node,
+		tail:        node,
 	}
 }
 
 // Add an element of type T to the end of the queue. Complexity is O(1)
 func (r *Queue[T]) Enqueue(element T) {
-	if r.curBuffSize == 0 {
-		r.data[0] = &[1000]T{}
-		r.data[0][0] = element
+	r.tail.write(element, int(r.tailIndex))
+
+	if r.tailIndex == 999 {
+		// prepare a new tail node for extra 1000 entries
+		node := newArrayNode[T](nil)
+		r.tail.next = node
+		r.tail = r.tail.next
+		r.tailIndex = 0
 	} else {
 		r.tailIndex++
-		clusterId := r.tailIndex / 1000
-		normalizedClusterIndex := r.tailIndex % 1000
-		// check if cluster exists
-		if clusterId > r.highClusterIndex {
-			// we need to create a new cluster here
-			r.highClusterIndex++
-			r.data[r.highClusterIndex] = &[1000]T{}
-
-			if clusterId != r.highClusterIndex {
-				panic("misaligned cluster cannot continue")
-			}
-		}
-		r.data[clusterId][normalizedClusterIndex] = element
 	}
 	r.curBuffSize++
 }
 
-func (r *Queue[T]) repackQueue() {
-	placesToShift := r.headIndex / 1000
-	if placesToShift > 0 {
-		return
-	}
-
-	newmap := make(map[uint]*[1000]T)
-	var cnt uint = 0
-	for i := placesToShift; i <= r.tailIndex/1000; i++ {
-		newmap[cnt] = r.data[i]
-		cnt++
-	}
-	r.data = newmap
-	r.headIndex -= placesToShift * 1000
-	r.tailIndex -= placesToShift * 1000
-}
-
 // Remove and return am element of type T from the beginning of the queue. Complexity is O(1)
 func (r *Queue[T]) Dequeue() (T, error) {
+	var result T
 	if r.curBuffSize == 0 {
-		var result T
 		return result, errors.New("empty list")
 	}
-	var ret T
-	clusterId := r.headIndex / 1000
-	normalizedClusterIndex := r.headIndex % 1000
 
-	if r.curBuffSize == 1 {
-		ret = r.data[clusterId][normalizedClusterIndex]
-		r.curBuffSize = 0
+	r.curBuffSize--
+	result = r.head.read(int(r.headIndex))
+
+	if r.headIndex == 999 {
 		r.headIndex = 0
-		r.tailIndex = 0
-		if clusterId > 0 {
-			r.data = make(map[uint]*[1000]T)
-		}
-		return ret, nil
+		r.head = r.head.next
 	} else {
-		ret = r.data[clusterId][normalizedClusterIndex]
 		r.headIndex++
-		r.curBuffSize--
 	}
 
-	r.repackQueue()
+	if r.curBuffSize == 0 {
+		r.headIndex = 0
+		r.tailIndex = 0
+	}
 
-	return ret, nil
+	return result, nil
 }
 
 // Checks if the queue is empty
@@ -114,21 +83,44 @@ func (r *Queue[T]) IsEmpty() bool {
 
 // Return am element of type T from the beginning of the queue without Dequeuing it. Complexity is O(1)
 func (r *Queue[T]) Peek() (T, error) {
+	var result T
 	if r.curBuffSize == 0 {
-		var result T
 		return result, errors.New("empty list")
 	}
 
-	clusterId := r.headIndex / 1000
-	normalizedClusterIndex := r.headIndex % 1000
-	return r.data[clusterId][normalizedClusterIndex], nil
+	normalizedIndex := 1000 % r.headIndex
+	result = r.head.read(int(normalizedIndex))
 
+	return result, nil
 }
 
 // Return a slice representation of the current state of the queue
 func (r *Queue[T]) ToSlice() []T {
+	ret := make([]T, 0)
+	if r.curBuffSize == 0 {
+		return ret
+	}
 
-	return make([]T, 0)
+	startingIndex := r.headIndex
+	startingNode := r.head
+	finished := false
+
+	for startingNode != nil && !finished {
+		ret = append(ret, startingNode.data[startingIndex])
+
+		if r.tail == startingNode && (startingIndex+1) == r.tailIndex {
+			return ret
+		}
+
+		if startingIndex == 999 {
+			startingNode = startingNode.next
+			startingIndex = 0
+		} else {
+			startingIndex++
+		}
+	}
+
+	return ret
 }
 
 // Return the number of elements in the queue

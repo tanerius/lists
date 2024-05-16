@@ -47,3 +47,25 @@ func newSingleNode[T any](d T, n *snode[T]) *snode[T] {
 		next: n,
 	}
 }
+
+// Struct for a single link node
+type arrnode[T any] struct {
+	data [1000]T
+	next *arrnode[T]
+}
+
+// Constructor for a single link node
+func newArrayNode[T any](n *arrnode[T]) *arrnode[T] {
+	return &arrnode[T]{
+		data: [1000]T{},
+		next: n,
+	}
+}
+
+func (r *arrnode[T]) write(value T, pos int) {
+	r.data[pos] = value
+}
+
+func (r *arrnode[T]) read(pos int) T {
+	return r.data[pos]
+}

@@ -93,7 +93,7 @@ Output:
 
 ## Benchmarks
 
-The following are results from runninf a benchamark test
+The following are results from running a benchamark test
 
 ```
 goos: linux

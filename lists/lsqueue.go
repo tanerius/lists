@@ -24,10 +24,11 @@ func NewLSQueue[T any](size uint) *LSQueue[T] {
 		maxBuffSize: size,
 		curBuffSize: 0,
 		lastIndex:   0,
-		data:        make([]T, size, size),
+		data:        make([]T, size),
 	}
 }
 
+// A hidden method to compute the index of the next element to be dequeued
 func (r *LSQueue[T]) getFrontElementIndex() int {
 	if r.curBuffSize == 0 {
 		return 0
@@ -100,10 +101,15 @@ func (r *LSQueue[T]) ToSlice() []T {
 	if r.curBuffSize == 0 {
 		return make([]T, 0)
 	}
-
+	indexOfInitialElement := r.getFrontElementIndex()
 	s := make([]T, 0, r.curBuffSize)
+	size := 0
 
-	// TODO: Implement
+	for size < int(r.curBuffSize) {
+		s = append(s, r.data[indexOfInitialElement])
+		indexOfInitialElement = (indexOfInitialElement + 1) % int(r.maxBuffSize)
+		size++
+	}
 
 	return s
 }
