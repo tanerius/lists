@@ -58,6 +58,23 @@ func (r *Queue[T]) Enqueue(element T) {
 	r.curBuffSize++
 }
 
+func (r *Queue[T]) repackQueue() {
+	placesToShift := r.headIndex / 1000
+	if placesToShift > 0 {
+		return
+	}
+
+	newmap := make(map[uint]*[1000]T)
+	var cnt uint = 0
+	for i := placesToShift; i <= r.tailIndex/1000; i++ {
+		newmap[cnt] = r.data[i]
+		cnt++
+	}
+	r.data = newmap
+	r.headIndex -= placesToShift * 1000
+	r.tailIndex -= placesToShift * 1000
+}
+
 // Remove and return am element of type T from the beginning of the queue. Complexity is O(1)
 func (r *Queue[T]) Dequeue() (T, error) {
 	if r.curBuffSize == 0 {
@@ -67,6 +84,7 @@ func (r *Queue[T]) Dequeue() (T, error) {
 	var ret T
 	clusterId := r.headIndex / 1000
 	normalizedClusterIndex := r.headIndex % 1000
+
 	if r.curBuffSize == 1 {
 		ret = r.data[clusterId][normalizedClusterIndex]
 		r.curBuffSize = 0
@@ -75,11 +93,14 @@ func (r *Queue[T]) Dequeue() (T, error) {
 		if clusterId > 0 {
 			r.data = make(map[uint]*[1000]T)
 		}
+		return ret, nil
 	} else {
 		ret = r.data[clusterId][normalizedClusterIndex]
 		r.headIndex++
 		r.curBuffSize--
 	}
+
+	r.repackQueue()
 
 	return ret, nil
 }
