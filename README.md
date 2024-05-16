@@ -95,6 +95,29 @@ Output:
 
 The following are results from running a benchamark test
 
+### Benchmark of v1.2.0
+
+```
+goos: linux
+goarch: amd64
+pkg: github.com/tanerius/lists/lists
+cpu: 13th Gen Intel(R) Core(TM) i7-13700HX
+BenchmarkRegularQueueEnqueue-24         501823215                2.501 ns/op
+BenchmarkRegularQueueDequeue-24         1000000000               0.8231 ns/op
+BenchmarkLimitedSizeQueueEnqueue-24     275466990                4.287 ns/op
+BenchmarkLimitedSizeQueueDequeue-24     1000000000               0.2093 ns/op
+BenchmarkRegularSafeQueueEnqueue-24     28228327                41.16 ns/op
+BenchmarkRegularSafeQueueDequeue-24     54736119                22.42 ns/op
+BenchmarkSafeStackPush-24               30719182                40.89 ns/op
+BenchmarkSafeStackPop-24                52156732                22.62 ns/op
+BenchmarkStackPush-24                   607518001                2.386 ns/op
+BenchmarkStackPop-24                    1000000000               0.7070 ns/op
+PASS
+ok      github.com/tanerius/lists/lists 26.666s
+```
+
+### Benchmark of v1.1.1
+
 ```
 goos: linux
 goarch: amd64
@@ -115,3 +138,11 @@ BenchmarkStackPop-24                            903547963                1.585 n
 PASS
 ok      github.com/tanerius/lists/lists 74.369s
 ```
+
+## TODO
+
+A list od things I plan to add:
+
+- Optimize SafeStack (now its pretty useless)
+- Optimize SafeQueue (now its also pretty useless)
+- Implement SafeLSQueue 

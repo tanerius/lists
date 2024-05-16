@@ -5,12 +5,14 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
-## [v1.2.0] - 2024-05-15
+## [v1.2.0] - 2024-05-16
 
 ### Added
 
 - LSQueue struct representing a Limited Size queue. 
 - Sliceable and Limitable interfaces
+- `arrnode` to `core` which is a struct helping to implement clustered containers
+- Usage examples under the `examples` directory
 
 ### Updated
 
