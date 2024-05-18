@@ -1,5 +1,7 @@
 # Golang generic list types - Stack and Queue v1.2.0
 
+[![Go Reference](https://pkg.go.dev/badge/github.com/tanerius/lists.svg)](https://pkg.go.dev/github.com/tanerius/lists)
+
 **Lists** is a simple O(1) implementation of a stack, a queue and a limited size queue in golang. 
 The reson for this is that Golang as of yet does not have a standard implementation of a generic queue and stack.  
   
