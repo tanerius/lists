@@ -5,6 +5,18 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## [v1.3.0] - 2024-05-28
+
+### Added
+
+- SafeLSQueue 
+
+### Updated
+
+- SafeQueue and SafeStack to use the new mechanics but safely.
+- Enqueue from SafeQueue and SafeStack has double (better) performance than in the previous version (see tests)
+- Dequeue from SafeQueue and SafeStack also has better performance now than in previous versions (see tests)
+
 ## [v1.2.0] - 2024-05-16
 
 ### Added

@@ -1,6 +1,6 @@
 package lists
 
-const ListsVersion string = "1.2.0"
+const ListsVersion string = "1.3.0"
 
 // Interface for countable types
 type Countable[T any] interface {
@@ -32,20 +32,6 @@ type Lifo[T any] interface {
 	Pop() (T, error)
 	IsEmpty() bool
 	Peek() (T, error)
-}
-
-// Struct for a single link node
-type snode[T any] struct {
-	data T
-	next *snode[T]
-}
-
-// Constructor for a single link node
-func newSingleNode[T any](d T, n *snode[T]) *snode[T] {
-	return &snode[T]{
-		data: d,
-		next: n,
-	}
 }
 
 // Struct for a single link node

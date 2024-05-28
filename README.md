@@ -6,7 +6,7 @@
 The reson for this is that Golang as of yet does not have a standard implementation of a generic queue and stack.  
   
 **Stack**, **Queue** and **LSQueue** and NOT thread safe.  
-Both **Stack** and **Queue** have their thread safe counterparts, **SafeStack** and **SafeQueue** respectively.  
+**Stack** and **Queue** have their thread safe counterparts, **SafeStack** and **SafeQueue** respectively.  
 
 ## Queue and Limited Size Queue
 
@@ -95,7 +95,31 @@ Output:
 
 ## Benchmarks
 
-The following are results from running a benchamark test
+The following are results from running a benchamark test with `go test -bench=.`
+
+### Benchmark of v1.3.0
+
+```
+goos: linux
+goos: linux
+goarch: amd64
+pkg: github.com/tanerius/lists/lists
+cpu: 13th Gen Intel(R) Core(TM) i7-13700HX
+BenchmarkRegularQueueEnqueue-24                 467376658                2.300 ns/op
+BenchmarkRegularQueueDequeue-24                 1000000000               0.8321 ns/op
+BenchmarkLimitedSizeQueueEnqueue-24             279022058                4.330 ns/op
+BenchmarkLimitedSizeQueueDequeue-24             1000000000               0.2041 ns/op
+BenchmarkRegularSafeQueueEnqueue-24             52909809                21.50 ns/op
+BenchmarkRegularSafeQueueDequeue-24             56552139                20.49 ns/op
+BenchmarkLimitedSizeSafeQueueEnqueue-24         58708641                19.93 ns/op
+BenchmarkLimitedSizeSafeQueueDequeue-24         36732121                31.56 ns/op
+BenchmarkSafeStackPush-24                       53247632                21.89 ns/op
+BenchmarkSafeStackPop-24                        58177344                19.50 ns/op
+BenchmarkStackPush-24                           539450361                2.269 ns/op
+BenchmarkStackPop-24                            1000000000               0.7253 ns/op
+PASS
+ok      github.com/tanerius/lists/lists 26.910s
+```
 
 ### Benchmark of v1.2.0
 
@@ -148,3 +172,4 @@ A list od things I plan to add:
 - Optimize SafeStack (now its pretty useless)
 - Optimize SafeQueue (now its also pretty useless)
 - Implement SafeLSQueue 
+- Implement Single and Double Linked Lists

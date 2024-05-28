@@ -25,9 +25,8 @@ func BenchmarkRegularSafeQueueDequeue(b *testing.B) {
 	}
 }
 
-/*
 func BenchmarkLimitedSizeSafeQueueEnqueue(b *testing.B) {
-	queue := NewSafeQueue[int](10)
+	queue := NewSafeLSQueue[int](10)
 
 	for i := 0; i < b.N; i++ {
 		queue.Enqueue(i)
@@ -35,7 +34,7 @@ func BenchmarkLimitedSizeSafeQueueEnqueue(b *testing.B) {
 }
 
 func BenchmarkLimitedSizeSafeQueueDequeue(b *testing.B) {
-	queue := NewSafeQueue[int](10)
+	queue := NewSafeLSQueue[int](10)
 	b.StopTimer()
 	for i := 0; i < b.N; i++ {
 		queue.Enqueue(i)
@@ -46,4 +45,3 @@ func BenchmarkLimitedSizeSafeQueueDequeue(b *testing.B) {
 		queue.Dequeue()
 	}
 }
-*/

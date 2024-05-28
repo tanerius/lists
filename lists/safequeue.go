@@ -9,16 +9,17 @@ import (
 // by the addition of entities at one end of the sequence and the removal of entities from the
 // other end of the sequence.
 //
-// # SafeQueue is threadsafe
+// SafeQueue is a thread safe version of Queue. However only the queue structure itself is safe. It is up to the
+// developer to ensure thread safety of the internals of the data.
 //
-// # Please note that while the type itself is safe the data should handle its own thread safety
-//
-// Queue is a list that implements the Fifo interface
+// SafeQueue is a list that implements the Fifo interface
 type SafeQueue[T any] struct {
-	mu          sync.RWMutex
 	curBuffSize uint
-	head        *snode[T]
-	tail        *snode[T]
+	headIndex   uint
+	tailIndex   uint
+	head        *arrnode[T]
+	tail        *arrnode[T]
+	mu          sync.RWMutex
 }
 
 // The constructor for a new Queue instance with elements of type T.
@@ -27,10 +28,13 @@ type SafeQueue[T any] struct {
 //
 // Returns a pointer to a queue
 func NewSafeQueue[T any]() *SafeQueue[T] {
+	node := newArrayNode[T](nil)
 	return &SafeQueue[T]{
 		curBuffSize: 0,
-		head:        nil,
-		tail:        nil,
+		headIndex:   0,
+		tailIndex:   0,
+		head:        node,
+		tail:        node,
 	}
 }
 
@@ -39,16 +43,18 @@ func (r *SafeQueue[T]) Enqueue(element T) {
 	r.mu.Lock()
 	defer r.mu.Unlock()
 
-	if r.curBuffSize == 0 {
-		r.head = newSingleNode[T](element, nil)
-		r.tail = r.head
-		r.curBuffSize++
+	r.tail.write(element, int(r.tailIndex))
+
+	if r.tailIndex == 999 {
+		// prepare a new tail node for extra 1000 entries
+		node := newArrayNode[T](nil)
+		r.tail.next = node
+		r.tail = r.tail.next
+		r.tailIndex = 0
 	} else {
-		r.curBuffSize++
-		newItem := newSingleNode[T](element, nil)
-		r.tail.next = newItem
-		r.tail = newItem
+		r.tailIndex++
 	}
+	r.curBuffSize++
 }
 
 // Remove and return am element of type T from the beginning of the queue. Complexity is O(1)
@@ -56,19 +62,27 @@ func (r *SafeQueue[T]) Dequeue() (T, error) {
 	r.mu.Lock()
 	defer r.mu.Unlock()
 
+	var result T
 	if r.curBuffSize == 0 {
-		var result T
 		return result, errors.New("empty list")
 	}
 
-	ret := r.head.data
-	r.head = r.head.next
 	r.curBuffSize--
-	if r.curBuffSize == 0 {
-		r.head = nil
-		r.tail = nil
+	result = r.head.read(int(r.headIndex))
+
+	if r.headIndex == 999 {
+		r.headIndex = 0
+		r.head = r.head.next
+	} else {
+		r.headIndex++
 	}
-	return ret, nil
+
+	if r.curBuffSize == 0 {
+		r.headIndex = 0
+		r.tailIndex = 0
+	}
+
+	return result, nil
 }
 
 // Checks if the queue is empty
@@ -77,6 +91,7 @@ func (r *SafeQueue[T]) Dequeue() (T, error) {
 func (r *SafeQueue[T]) IsEmpty() bool {
 	r.mu.RLock()
 	defer r.mu.RUnlock()
+
 	return r.curBuffSize == 0
 }
 
@@ -85,12 +100,15 @@ func (r *SafeQueue[T]) Peek() (T, error) {
 	r.mu.RLock()
 	defer r.mu.RUnlock()
 
+	var result T
 	if r.curBuffSize == 0 {
-		var result T
 		return result, errors.New("empty list")
 	}
 
-	return r.tail.data, nil
+	normalizedIndex := 1000 % r.headIndex
+	result = r.head.read(int(normalizedIndex))
+
+	return result, nil
 }
 
 // Return a slice representation of the current state of the queue
@@ -98,24 +116,36 @@ func (r *SafeQueue[T]) ToSlice() []T {
 	r.mu.RLock()
 	defer r.mu.RUnlock()
 
+	ret := make([]T, 0)
 	if r.curBuffSize == 0 {
-		return make([]T, 0)
+		return ret
 	}
 
-	s := make([]T, 0, r.curBuffSize)
-	tmp := r.head
+	startingIndex := r.headIndex
+	startingNode := r.head
+	finished := false
 
-	for tmp != nil {
-		s = append(s, tmp.data)
-		tmp = tmp.next
+	for startingNode != nil && !finished {
+		ret = append(ret, startingNode.data[startingIndex])
+
+		if r.tail == startingNode && (startingIndex+1) == r.tailIndex {
+			return ret
+		}
+
+		if startingIndex == 999 {
+			startingNode = startingNode.next
+			startingIndex = 0
+		} else {
+			startingIndex++
+		}
 	}
-	return s
+
+	return ret
 }
 
 // Return the number of elements in the queue
 func (r *SafeQueue[T]) Count() uint {
 	r.mu.RLock()
 	defer r.mu.RUnlock()
-
 	return r.curBuffSize
 }
