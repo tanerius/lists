@@ -1,4 +1,4 @@
-# Golang generic list types - Stack and Queue v1.2.0
+# Golang generic list types - Stack and Queue v1.3.0
 
 [![Go Reference](https://pkg.go.dev/badge/github.com/tanerius/lists.svg)](https://pkg.go.dev/github.com/tanerius/lists)
 
@@ -169,7 +169,4 @@ ok      github.com/tanerius/lists/lists 74.369s
 
 A list od things I plan to add:
 
-- Optimize SafeStack (now its pretty useless)
-- Optimize SafeQueue (now its also pretty useless)
-- Implement SafeLSQueue 
 - Implement Single and Double Linked Lists
