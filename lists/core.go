@@ -1,37 +1,27 @@
 package lists
 
-const ListsVersion string = "1.3.0"
-
-// Interface for countable types
-type Countable[T any] interface {
-	Count() uint
-}
-
-// Interface for sliceable types
-type Sliceable[T any] interface {
-	ToSlice() []any
-}
-
-// Interface for limited lists
-type Limitable[T any] interface {
-	Capacity() uint
-	Isfull() bool
-}
+const ListsVersion string = "1.4.0"
 
 // Interface for a Fifo list
 type Fifo[T any] interface {
-	Enqueue(x T)
+	Capacity() int
+	Count() uint
 	Dequeue() (T, error)
+	Enqueue(x T)
 	IsEmpty() bool
+	IsFull() bool
 	Peek() (T, error)
+	ToSlice() []T
 }
 
 // Interface for a Lifo list
 type Lifo[T any] interface {
+	Count() uint
+	IsEmpty() bool
 	Push(x T)
 	Pop() (T, error)
-	IsEmpty() bool
 	Peek() (T, error)
+	ToSlice() []T
 }
 
 // Struct for a single link node

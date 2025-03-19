@@ -1,0 +1,8 @@
+name: lists
+
+services:
+  test:
+    build:
+      context: .
+      target: tester
+    command: ["go", "test", "./..."]

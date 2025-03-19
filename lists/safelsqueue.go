@@ -25,7 +25,7 @@ type SafeLSQueue[T any] struct {
 // The constructor for a new LSQueue instance with elements of type T.
 //
 // # Returns a pointer to a LSQueue
-func NewSafeLSQueue[T any](size uint) *SafeLSQueue[T] {
+func NewSafeLSQueue[T any](size uint) Fifo[T] {
 
 	return &SafeLSQueue[T]{
 		maxBuffSize: size,
@@ -96,7 +96,7 @@ func (r *SafeLSQueue[T]) IsEmpty() bool {
 //
 // Return true if the limites size queue has reached its given capacity. Otherwise returns false.
 // Also returns false if the queue was created with a size of 0 (generic unlimited queue)
-func (r *SafeLSQueue[T]) Isfull() bool {
+func (r *SafeLSQueue[T]) IsFull() bool {
 	r.mu.RLock()
 	defer r.mu.RUnlock()
 	return r.curBuffSize == r.maxBuffSize
@@ -146,9 +146,9 @@ func (r *SafeLSQueue[T]) Count() uint {
 }
 
 // Return the number of elements in the queue
-func (r *SafeLSQueue[T]) Capacity() uint {
+func (r *SafeLSQueue[T]) Capacity() int {
 	r.mu.RLock()
 	defer r.mu.RUnlock()
 
-	return r.maxBuffSize
+	return int(r.maxBuffSize)
 }

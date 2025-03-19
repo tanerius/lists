@@ -1,4 +1,4 @@
-# Golang generic list types - Stack and Queue v1.3.0
+# Golang generic list types - Stack and Queue v1.4.0
 
 [![Go Reference](https://pkg.go.dev/badge/github.com/tanerius/lists.svg)](https://pkg.go.dev/github.com/tanerius/lists)
 

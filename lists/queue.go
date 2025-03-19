@@ -18,11 +18,9 @@ type Queue[T any] struct {
 }
 
 // The constructor for a new Queue instance with elements of type T.
-// If size > 0 then the generated queue is a limited size queue.
-// If size = 0 then it is a generic unlimited queue
 //
 // Returns a pointer to a queue
-func NewQueue[T any]() *Queue[T] {
+func NewQueue[T any]() Fifo[T] {
 	node := newArrayNode[T](nil)
 	return &Queue[T]{
 		curBuffSize: 0,
@@ -31,6 +29,11 @@ func NewQueue[T any]() *Queue[T] {
 		head:        node,
 		tail:        node,
 	}
+}
+
+// Return the number of elements in the queue. -1 means unlimited
+func (r *Queue[T]) Capacity() int {
+	return -1
 }
 
 // Add an element of type T to the end of the queue. Complexity is O(1)
@@ -79,6 +82,11 @@ func (r *Queue[T]) Dequeue() (T, error) {
 // Return true if empty false otherwise
 func (r *Queue[T]) IsEmpty() bool {
 	return r.curBuffSize == 0
+}
+
+// Checks if the queue is full. Can never be full but just for interface implementation
+func (r *Queue[T]) IsFull() bool {
+	return false
 }
 
 // Return am element of type T from the beginning of the queue without Dequeuing it. Complexity is O(1)

@@ -18,7 +18,7 @@ type LSQueue[T any] struct {
 // The constructor for a new LSQueue instance with elements of type T.
 //
 // # Returns a pointer to a LSQueue
-func NewLSQueue[T any](size uint) *LSQueue[T] {
+func NewLSQueue[T any](size uint) Fifo[T] {
 
 	return &LSQueue[T]{
 		maxBuffSize: size,
@@ -41,6 +41,11 @@ func (r *LSQueue[T]) getFrontElementIndex() int {
 	}
 
 	return i
+}
+
+// Return the number of elements in the queue
+func (r *LSQueue[T]) Capacity() int {
+	return int(r.maxBuffSize)
 }
 
 // Add an element of type T to the end of the queue. Complexity is O(1)
@@ -81,7 +86,7 @@ func (r *LSQueue[T]) IsEmpty() bool {
 //
 // Return true if the limites size queue has reached its given capacity. Otherwise returns false.
 // Also returns false if the queue was created with a size of 0 (generic unlimited queue)
-func (r *LSQueue[T]) Isfull() bool {
+func (r *LSQueue[T]) IsFull() bool {
 	return r.curBuffSize == r.maxBuffSize
 }
 
@@ -117,9 +122,4 @@ func (r *LSQueue[T]) ToSlice() []T {
 // Return the number of elements in the queue
 func (r *LSQueue[T]) Count() uint {
 	return r.curBuffSize
-}
-
-// Return the number of elements in the queue
-func (r *LSQueue[T]) Capacity() uint {
-	return r.maxBuffSize
 }

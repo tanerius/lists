@@ -27,7 +27,7 @@ type SafeQueue[T any] struct {
 // If size = 0 then it is a generic unlimited queue
 //
 // Returns a pointer to a queue
-func NewSafeQueue[T any]() *SafeQueue[T] {
+func NewSafeQueue[T any]() Fifo[T] {
 	node := newArrayNode[T](nil)
 	return &SafeQueue[T]{
 		curBuffSize: 0,
@@ -36,6 +36,11 @@ func NewSafeQueue[T any]() *SafeQueue[T] {
 		head:        node,
 		tail:        node,
 	}
+}
+
+// Return the number of elements in the queue. -1 means unlimited
+func (r *SafeQueue[T]) Capacity() int {
+	return -1
 }
 
 // Add an element of type T to the end of the queue. Complexity is O(1)
@@ -93,6 +98,11 @@ func (r *SafeQueue[T]) IsEmpty() bool {
 	defer r.mu.RUnlock()
 
 	return r.curBuffSize == 0
+}
+
+// Checks if the queue is full
+func (r *SafeQueue[T]) IsFull() bool {
+	return false
 }
 
 // Return am element of type T from the beginning of the queue without Dequeuing it. Complexity is O(1)

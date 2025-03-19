@@ -14,7 +14,7 @@ type Stack[T any] struct {
 }
 
 // Constructs a new Stack with elements of type T
-func NewStack[T any]() *Stack[T] {
+func NewStack[T any]() Lifo[T] {
 	return &Stack[T]{
 		curBuffSize: 0,
 		head:        newArrayNode[T](nil),

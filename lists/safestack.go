@@ -18,7 +18,7 @@ type SafeStack[T any] struct {
 }
 
 // Constructs a new Stack with elements of type T
-func NewSafeStack[T any]() *SafeStack[T] {
+func NewSafeStack[T any]() Lifo[T] {
 	return &SafeStack[T]{
 		curBuffSize: 0,
 		head:        newArrayNode[T](nil),
