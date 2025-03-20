@@ -115,8 +115,7 @@ func (r *SafeQueue[T]) Peek() (T, error) {
 		return result, errors.New("empty list")
 	}
 
-	normalizedIndex := 1000 % r.headIndex
-	result = r.head.read(int(normalizedIndex))
+	result = r.head.read(int(r.headIndex))
 
 	return result, nil
 }

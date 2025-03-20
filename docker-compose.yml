@@ -5,4 +5,6 @@ services:
     build:
       context: .
       target: tester
+    volumes:
+      - ./:/app
     command: ["go", "test", "./..."]
